@@ -4,6 +4,7 @@ from urllib.parse import urlparse, urlunparse, unquote
 import scrapy
 from scrapy.crawler import CrawlerProcess
 from parsers import PARSING_CONFIG, ContentController
+from data_processers import ScrapedDataProcesser
 
 class CyrillicUrlMiddleware:
     def _decode_url(self, url):
@@ -53,12 +54,21 @@ class Scraper(scrapy.Spider):
         
 
 
-def main():
+def scrape():
     logging.getLogger('scrapy').setLevel(logging.WARNING)
     logging.getLogger('scrapy').propagate = False
     process = CrawlerProcess()
     process.crawl(Scraper)
     process.start()
 
+def process():
+    pr = ScrapedDataProcesser()
+    with open('./outputs/products_data.json', 'r', encoding='utf-8') as f:
+        data = pr.get_cleared_data(f)
+        print(data.head(20))
+        # print(list(data['weight']))
+
+
+
 if __name__ == "__main__":
-    main()
+    process()
