@@ -65,8 +65,9 @@ def process():
     pr = ScrapedDataProcesser()
     with open('./outputs/products_data.json', 'r', encoding='utf-8') as f:
         data = pr.get_cleared_data(f)
-        print(data.head(20))
-        # print(list(data['weight']))
+        malt_data = pr.get_malts_characteristics(data[data['item_type'] == 'malt'].copy())
+        hop_data = pr.get_hops_characteristics(data[data['item_type'] == 'hop'].copy())
+        yeast_data = pr.get_yeasts_characteristics(data[data['item_type'] == 'yeast'].copy())
 
 
 
