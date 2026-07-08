@@ -5,6 +5,7 @@ import scrapy
 from scrapy.crawler import CrawlerProcess
 from parsers import PARSING_CONFIG, ContentController
 from data_processers import ScrapedDataProcesser
+from pathlib import Path
 
 class CyrillicUrlMiddleware:
     def _decode_url(self, url):
@@ -63,11 +64,12 @@ def scrape():
 
 def process():
     pr = ScrapedDataProcesser()
-    with open('./outputs/products_data.json', 'r', encoding='utf-8') as f:
+    path = Path(__file__).parent.parent / "outputs"
+    with open(path / "products_data.json", 'r', encoding='utf-8') as f:
         data = pr.get_cleared_data(f)
-        malt_data = pr.get_malts_characteristics(data[data['item_type'] == 'malt'].copy())
-        hop_data = pr.get_hops_characteristics(data[data['item_type'] == 'hop'].copy())
-        yeast_data = pr.get_yeasts_characteristics(data[data['item_type'] == 'yeast'].copy())
+        malt_data = pr.get_malts_characteristics(data[data['item_type'] == 'malt'].copy(), str(path))
+        hop_data = pr.get_hops_characteristics(data[data['item_type'] == 'hop'].copy(), str(path))
+        yeast_data = pr.get_yeasts_characteristics(data[data['item_type'] == 'yeast'].copy(), str(path))
 
 
 
