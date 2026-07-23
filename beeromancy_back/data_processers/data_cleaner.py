@@ -1,4 +1,6 @@
 import re
+import string
+from rapidfuzz import fuzz
 
 def get_clean_string(string: str) -> str:
     s = string.strip()
@@ -6,7 +8,7 @@ def get_clean_string(string: str) -> str:
     s = s.replace('\xa0', ' ').replace('\u200b', '').replace('\ufeff', '')
     s = re.sub(r'[\x00-\x1f\x7f]', '', s)
     s = re.sub(r'[-–—]', '-', s)
-    return s.lower()
+    return _homoglyph_filter(s.lower())
 
 def get_clean_name(raw_name: str) -> str:
     items = raw_name.split(',')
@@ -31,12 +33,13 @@ def get_clean_name(raw_name: str) -> str:
     if len(items) > 2:
         name = get_clean_string(' '.join(items[0:-2]))
     
-    name = re.sub(r'\s?\(.*?\)\s?', '', name)
-    name = re.sub(r'^.*?[СсCc]олод\s?', '', name)
-    name = re.sub(r'^.*?[Дд]рожжи\s?', '', name)
-    name = re.sub(r'^.*?[Хх]мель\s?', '', name)
+    return '|'.join([name.strip(), weight, unit])
 
-    return '|'.join([name, weight, unit])
+def clean_with_dictionary(raw_name:str, source: dict, split_pattern: str = r'.*') -> str:
+    name_set = {source.get(part, part) for part in re.findall(split_pattern, raw_name)}
+    return ' '.join(sorted(list(name_set)))
+        
+
 
 NUM_SELECTOR = r"\d+(?:[.,]\d+)?"
 
@@ -64,3 +67,46 @@ def get_clean_characteristic(value: str) -> str:
             return value
     else:
         return value
+
+def get_most_common(st: str, base: list, comp_value: int = 80) -> str:
+    if not base:
+        return st
+    
+    comparison = [(compare_with_numbers(st, entry), entry) for entry in base]
+    max_ind, result = max(comparison)
+    return result if max_ind >= comp_value else st
+
+def compare_with_numbers(st1: str, st2: str) -> int:
+    st1_nums = set(re.findall(r'\d+', st1))
+    st2_nums = set(re.findall(r'\d+', st2))
+
+    if st1_nums != st2_nums:
+        return 0
+    else:
+        return fuzz.token_sort_ratio(st1, st2)
+
+def _homoglyph_filter(text:str)-> str:
+    if not text:
+        return ""
+    
+    homoglyphs = {
+        'c': 'с', 'a': 'а', 'e': 'е', 'o': 'о', 'p': 'р', 
+        'x': 'х', 'y': 'у', 'k': 'к', 'm': 'м', 'h': 'н'
+    }
+    
+    words = text.split()
+    fixed_words = []
+    
+    for word in words:
+        rus_count = len(re.findall(r'[а-яА-ЯёЁ]', word))
+        eng_count = len(re.findall(r'[a-zA-Z]', word))
+        
+        if rus_count > eng_count:
+            for eng, rus in homoglyphs.items():
+                word = word.replace(eng, rus)
+        else:
+            for eng, rus in homoglyphs.items():
+                word = word.replace(rus, eng)
+        fixed_words.append(word)
+            
+    return " ".join(fixed_words)
