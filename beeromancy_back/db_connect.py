@@ -18,9 +18,9 @@ class DatabaseController():
         if hasattr(self, 'session') and self.session:
             if exc_type is not None:
                 self.session.rollback()  # Откатываем, если была ошибка
-                print(f"[DB] Транзакция откатана из-за ошибки: {exc_val}")
+                print(f"[DB] Транзакция отменена из-за ошибки: {exc_val}")
             else:
-                self.session.commit()    # Сохраняем, если всё прошло гладко
+                self.session.commit()
             self.session.close()
 
     def get_ingredients_mapping(self) -> pd.DataFrame:
@@ -52,15 +52,15 @@ class DatabaseController():
             c_name = ingr['country']
             if c_name not in country_cache:
                 country_cache[c_name] = schema.Country(country_code = c_name, name = c_name)
-            country = country_cache[c_name]
+            country = country_cache.get(c_name)
             
-            prod_name = ingr['brand']
+            prod_name = ingr['brand'].strip()
             if prod_name not in producer_cache:
-                base_country = PRODUCER_BASE_COUNTRIES.get(prod_name)
+                base_country = PRODUCER_BASE_COUNTRIES.get(prod_name, 'us')
                 if base_country and base_country not in country_cache:
                     country_cache[base_country] = schema.Country(country_code = base_country, name = base_country)
                 producer_cache[prod_name] = schema.Producer(name = prod_name, base_country=country_cache.get(base_country))
-            producer = producer_cache[prod_name]
+            producer = producer_cache.get(prod_name)
 
             ingr_orm = schema.Ingredient(
                 name=ingr['clean_name'],

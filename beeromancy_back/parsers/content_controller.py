@@ -1,9 +1,10 @@
 import json
 import pandas as pd
 
+
 class ContentController:
-    def __init__(self):
-        with open('./outputs/products_data.json', 'r', encoding='utf-8') as f:
+    def __init__(self, data_path: str):
+        with open(data_path, 'r', encoding='utf-8') as f:
             self.config = json.load(f)
         self.data = pd.json_normalize(self.config)
         self.data_unchecked = set()

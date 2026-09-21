@@ -12,6 +12,8 @@ class Country(Base):
     country_code: Mapped[str] = mapped_column(String(2), primary_key=True)
     name: Mapped[str]
 
+    producers: Mapped[List[Producer]] = relationship(back_populates="base_country")
+
 class Producer(Base):
     __tablename__ = "dim_producers"
 
@@ -19,7 +21,7 @@ class Producer(Base):
     name: Mapped[str]
     country_code: Mapped[Optional[str]] = mapped_column(ForeignKey("dim_countries.country_code"))
 
-    base_country: Mapped[Optional[Country]] = relationship()
+    base_country: Mapped[Optional[Country]] = relationship(back_populates="producers")
 
 class IngrType(Base):
     __tablename__ = "dim_ingr_types"
