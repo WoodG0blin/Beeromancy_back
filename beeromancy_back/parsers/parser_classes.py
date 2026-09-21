@@ -70,7 +70,7 @@ class BeerRfParser(Parser):
         
         loader = BaseLoader(item, response=response)
 
-        loader.add_xpath('description', './/div[@class="gp-info"//*[@itemprop="description"]/text()')
+        loader.add_xpath('description', './/div[@class="gp-info"]//*[@itemprop="description"]/text()')
 
         loader.selector = response.css('.gp-more')
         loader.add_xpath('brand', './/*[@itemprop="brand"]/text()')
