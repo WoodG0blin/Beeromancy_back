@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from .data_cleaner import NUM_SELECTOR
+from .cleaner_utils import NUM_SELECTOR, get_most_common
 
 PRIORITY_SOURCE = 'beer.rf'
 TARGET_COLUMNS = ['clean_name', 'description', 'full_description']
@@ -17,6 +17,24 @@ CHARACTERISTICS = {
         'val': ['flocculation', 'diastatic', 'fenolic']}
 }
 
+def combine_master_names(df: pd.DataFrame, master_names: pd.DataFrame) -> pd.DataFrame:
+    df['master_name'] = df.groupby(['brand', 'country'])['filter_name'].transform(lambda n: _get_master_names(n, master_names))
+
+    columns_to_drop = [name for name in ['filter_name'] if name in df.columns]
+    df.drop(columns=columns_to_drop, inplace=True)
+
+    return df
+
+def _get_master_names(names_series: pd.Series, names_references: pd.DataFrame) -> pd.Series:
+    references = dict(zip(names_references["clean_name"], names_references["master_name"]))
+    search_base = [*references.keys()]
+    source = sorted(list(set(names_series.fillna('').to_list())), key=len)
+    
+    for name in source:
+        references[name] = references.get(get_most_common(name, search_base), name)
+        search_base.append(name)
+
+    return names_series.fillna('').map(references)
 
 def get_aggregated_ingredients(data_raw: pd.DataFrame) -> pd.DataFrame:
 
