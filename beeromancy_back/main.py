@@ -1,12 +1,8 @@
 import json
-
-from parsers import crawler
-from data_processers import ScrapedDataProcesser
+from pathlib import Path
 
 from data_processers import ScrapedDataProcesser
 from db_connect import DatabaseController
-from data_processers import aggregator
-from pathlib import Path
 
 
 def process():
@@ -33,6 +29,9 @@ def process():
         # pass the whole dataframe with prices to price manager for load
         print(f"To update prices redirected {len(processer.known_ingr)} entries")
 
+def scrape():
+    scraper = ScrapedDataProcesser()
+    scraper.scrape_data()
 
 if __name__ == "__main__":
     process()

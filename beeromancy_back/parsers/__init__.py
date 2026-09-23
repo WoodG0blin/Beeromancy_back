@@ -3,4 +3,4 @@
 # from .config import PARSING_CONFIG
 # # from .scrape_items import MaltItem, HopItem, YeastItem
 
-import crawler
+from . import crawler as crawler

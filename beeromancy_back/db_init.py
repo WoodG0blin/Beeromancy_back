@@ -1,5 +1,6 @@
 import sqlite3
 
+
 def create_brewery_db():
     connect = sqlite3.connect('beeromancy.db')
     cursor = connect.cursor()

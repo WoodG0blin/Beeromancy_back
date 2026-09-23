@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
+
 from scrapy.loader import ItemLoader
+
 from .content_controller import ContentController
+
 
 def get_clean_string(value):
     return " ".join(get_clean_list(value))

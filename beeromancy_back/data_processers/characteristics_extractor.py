@@ -1,6 +1,8 @@
-import pandas as pd
+
 import numpy as np
-from .cleaner_utils import get_clean_characteristic, NUM_SELECTOR
+import pandas as pd
+
+from .cleaner_utils import NUM_SELECTOR, get_clean_characteristic
 
 RANGE_SELECTOR = NUM_SELECTOR + r"\s?(?:[^\d;-]{0,10}-\s?" + NUM_SELECTOR + r")?"
 
@@ -29,13 +31,13 @@ CHARACTERISTICS_PARAMS = {
     }
 }
 
-def extract_characteristics(df: pd.DataFrame, item_type: str, outputs_path: str = None) -> pd.DataFrame:
+def extract_characteristics(df: pd.DataFrame, item_type: str, outputs_path: str | None = None) -> pd.DataFrame:
     parameters = CHARACTERISTICS_PARAMS.get(item_type, {})
     path = (outputs_path + f"/{item_type}_data.csv") if outputs_path else None
     return _set_new_columns(df.copy(), parameters, output_file=path)
             
     
-def _set_new_columns(df: pd.DataFrame, regex_params: dict, output_file: str = None) -> pd.DataFrame:
+def _set_new_columns(df: pd.DataFrame, regex_params: dict, output_file: str | None = None) -> pd.DataFrame:
     clean_characteristics = df['characteristics'].fillna('').apply(lambda l: ';'.join(l) if isinstance(l, list) else str(l))
 
     list_sep = r"[^;]*?"

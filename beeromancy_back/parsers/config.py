@@ -1,6 +1,5 @@
 from . import scrape_items
-from .parser_classes import BeerRfParser, GrainrusParser, GrainrusHopsParser
-
+from .parser_classes import BeerRfParser, GrainrusHopsParser, GrainrusParser
 
 PARSING_CONFIG = {
     scrape_items.MaltItem:{

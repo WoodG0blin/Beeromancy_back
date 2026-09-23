@@ -1,8 +1,16 @@
 import re
+
 import pandas as pd
-from .cleaner_utils import get_clean_string, get_clean_name, clean_with_dictionary
-from .names_subs import NAMES_SUBSTITUTIONS, BRANDS_SUBS
-from .countries_config import COUNTRY_CLEAN_MAP, COUNTRY_PATTERN, HOPS_DEFAULT_COUNTRIES, PRODUCER_BASE_COUNTRIES
+
+from .cleaner_utils import clean_with_dictionary, get_clean_name, get_clean_string
+from .countries_config import (
+    COUNTRY_CLEAN_MAP,
+    COUNTRY_PATTERN,
+    HOPS_DEFAULT_COUNTRIES,
+    PRODUCER_BASE_COUNTRIES,
+)
+from .names_subs import BRANDS_SUBS, NAMES_SUBSTITUTIONS
+
 
 def get_base_cleaning(raw_data: pd.DataFrame) -> pd.DataFrame:
     strings = raw_data.select_dtypes(include=['string'])

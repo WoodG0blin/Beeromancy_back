@@ -3,6 +3,7 @@ from pathlib import Path
 
 import scrapy
 from scrapy.crawler import CrawlerProcess
+
 from . import PARSING_CONFIG
 from .content_controller import ContentController
 
@@ -45,6 +46,6 @@ def run_parsers(data_path: Path) -> None:
         process.start()
 
         logger.info(f"Scraping completed, output file: {data_path}")
-    except Exception as e:
+    except Exception:
         logger.exception("Error occurred during scraping")
         raise

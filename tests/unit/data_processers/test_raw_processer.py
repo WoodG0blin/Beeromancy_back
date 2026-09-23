@@ -1,5 +1,6 @@
-import pytest
 import pandas as pd
+import pytest
+
 from beeromancy_back.data_processers import ScrapedDataProcesser
 
 

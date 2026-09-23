@@ -1,15 +1,17 @@
-import json
 import io
-import pandas as pd
+import json
 from pathlib import Path
-from .raw_processer import get_base_cleaning, get_deep_cleaning
+
+import pandas as pd
+
 from .aggregator import combine_master_names, get_aggregated_ingredients
 from .characteristics_extractor import extract_characteristics
+from .raw_processer import get_base_cleaning, get_deep_cleaning
 
 ITEM_TYPES = ['malt', 'hop', 'yeast']
 
 class ScrapedDataProcesser:
-    def __init__(self, local_output_path: Path = None):
+    def __init__(self, local_output_path: Path | None = None):
         self.output_path = local_output_path
         self.entries_to_add = {t: None for t in ITEM_TYPES}
         self.entries_to_update = {t: None for t in ITEM_TYPES}

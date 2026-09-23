@@ -1,22 +1,21 @@
-from dataclasses import dataclass, field, replace, fields
-from typing import List, Optional
+from dataclasses import dataclass, field, fields, replace
 
 
 @dataclass
 class BaseItem:
     item_type: str = "base"
-    source_domain: Optional[str] = None
+    source_domain: str | None = None
     name: str = None
     price: str = None
-    currency: Optional[str] = None
+    currency: str | None = None
     url: str = None
-    brand: Optional[str] = None
-    country: Optional[str] = None
-    subtype: Optional[str] = None
-    description: Optional[str] = None
-    full_description: Optional[str] = None
-    characteristics: List[str] = field(default_factory=list)
-    additional_info: Optional[str] = None
+    brand: str | None = None
+    country: str | None = None
+    subtype: str | None = None
+    description: str | None = None
+    full_description: str | None = None
+    characteristics: list[str] = field(default_factory=list)
+    additional_info: str | None = None
     update_status: str = None
 
     def copy(self):

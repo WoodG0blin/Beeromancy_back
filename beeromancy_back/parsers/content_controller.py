@@ -1,4 +1,5 @@
 import json
+
 import pandas as pd
 
 
@@ -19,10 +20,8 @@ class ContentController:
             for field in item.fields():
                 if field.name != 'price' and field.name in item_data:
                     val = item_data[field.name]
-                    if isinstance(val, (list, dict)):
+                    if isinstance(val, (list, dict)) or not pd.isna(val):
                         setattr(item, field.name, val)
-                    elif not pd.isna(val):
-                        setattr(item, field.name, val)
-                    setattr(item, 'update_status', 'UPD')
+                    item.update_status = 'UPD'
             return True
         return False

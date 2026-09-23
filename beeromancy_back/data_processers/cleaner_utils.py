@@ -1,6 +1,7 @@
 import re
-import string
+
 from rapidfuzz import fuzz
+
 
 def get_clean_string(string: str) -> str:
     s = string.strip()
@@ -33,11 +34,11 @@ def get_clean_name(raw_name: str) -> str:
     if len(items) > 2:
         name = get_clean_string(' '.join(items[0:-2]))
     
-    return '|'.join([name.strip(), weight, unit])
+    return f'{name.strip()}|{weight}|{unit}'
 
 def clean_with_dictionary(raw_name:str, source: dict, split_pattern: str = r'.*') -> str:
     name_set = {source.get(part, part) for part in re.findall(split_pattern, raw_name)}
-    return ' '.join(sorted(list(name_set)))
+    return ' '.join(sorted(name_set))
         
 
 

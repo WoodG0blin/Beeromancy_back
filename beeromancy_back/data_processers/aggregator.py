@@ -1,5 +1,6 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
+
 from .cleaner_utils import NUM_SELECTOR, get_most_common
 
 PRIORITY_SOURCE = 'beer.rf'
@@ -28,7 +29,7 @@ def combine_master_names(df: pd.DataFrame, master_names: pd.DataFrame) -> pd.Dat
 def _get_master_names(names_series: pd.Series, names_references: pd.DataFrame) -> pd.Series:
     references = dict(zip(names_references["clean_name"], names_references["master_name"]))
     search_base = [*references.keys()]
-    source = sorted(list(set(names_series.fillna('').to_list())), key=len)
+    source = sorted(set(names_series.fillna('').to_list()), key=len)
     
     for name in source:
         references[name] = references.get(get_most_common(name, search_base), name)

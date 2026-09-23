@@ -1,5 +1,11 @@
 import pytest
-from beeromancy_back.data_processers import get_clean_string, get_clean_name, get_clean_characteristic
+
+from beeromancy_back.data_processers import (
+    get_clean_characteristic,
+    get_clean_name,
+    get_clean_string,
+)
+
 
 @pytest.mark.parametrize("input_string, expected_output", [
     ("  Hello World!  ", "hello world!"),

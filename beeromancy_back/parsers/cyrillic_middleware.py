@@ -1,4 +1,6 @@
-from urllib.parse import urlparse, urlunparse, unquote
+import logging
+from urllib.parse import unquote, urlparse, urlunparse
+
 
 class CyrillicUrlMiddleware:
     def _decode_url(self, url):
@@ -14,7 +16,8 @@ class CyrillicUrlMiddleware:
                 path=cyrillic_path,
                 query=cyrillic_query
             ))
-        except Exception:
+        except (UnicodeError, ValueError) as e:
+            logging.getLogger(__name__).info(f"Error occurred while decoding URL: {e}")
             return url
 
     def process_response(self, request, response, spider):

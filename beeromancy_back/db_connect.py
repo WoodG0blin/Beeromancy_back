@@ -1,10 +1,16 @@
-import pandas as pd
-from sqlalchemy import select, create_engine, update
-from sqlalchemy.orm import Session
 import db_schema as schema
+import pandas as pd
 from data_processers import PRODUCER_BASE_COUNTRIES
+from sqlalchemy import create_engine, select, update
+from sqlalchemy.orm import Session
 
-class DatabaseController():
+CHARACTERISTIC_CLASSES = {
+    'malt': schema.Malt_Characteristics,
+    'yeast': schema.Yeast_Characteristics,
+    'hop': schema.Hop_Characteristics
+}
+
+class DatabaseController:
     def __init__(self):
         self.engine = create_engine("sqlite:///beeromancy.db", echo=False)
         schema.Base.metadata.create_all(bind=self.engine)
@@ -32,12 +38,6 @@ class DatabaseController():
 
         return pd.read_sql_query(q, con = self.engine)
 
-    CHARACTERISTIC_CLASSES = {
-        'malt': schema.Malt_Characteristics,
-        'yeast': schema.Yeast_Characteristics,
-        'hop': schema.Hop_Characteristics
-    }
-
     def try_prepare_for_loading(self, mapping: pd.DataFrame) -> bool:
         if mapping.empty:
             return False
@@ -58,9 +58,9 @@ class DatabaseController():
             self.type_cache[category] = schema.IngrType(name = category)
         ingr_type = self.type_cache[category]
 
-        chars_class = self.CHARACTERISTIC_CLASSES.get(category, None)
+        chars_class = CHARACTERISTIC_CLASSES.get(category, None)
         if chars_class is None:
-            raise Exception(f"unknown characteristics type {category}")
+            raise ValueError(f"unknown characteristics type {category}")
 
         for _, ingr in ingredients.iterrows():
             c_name = ingr['country']
@@ -112,10 +112,10 @@ class DatabaseController():
         if ingredients.empty:
             return
 
-        chars_class = self.CHARACTERISTIC_CLASSES.get(category)
+        chars_class = CHARACTERISTIC_CLASSES.get(category)
         if chars_class is None:
-            raise Exception(f"unknown characteristics type {category}")
-        
+            raise ValueError(f"unknown characteristics type {category}")
+
         chars_cols = chars_class.__table__.columns.keys()
         characteristics_list = self.session.scalars(select(chars_class).where(chars_class.ingr_id.in_([i.ingr_id for i in self.ingr_orm_to_update]))).all()
         characteristics = {c.ingr_id: c for c in characteristics_list}

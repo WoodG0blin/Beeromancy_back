@@ -1,8 +1,9 @@
-import pytest
 from pathlib import Path
-import pandas as pd
-import json
+
+import pytest
+
 from beeromancy_back.data_processers import ScrapedDataProcesser
+
 
 @pytest.fixture(scope="session")
 def test_raw_data():
