@@ -1,8 +1,8 @@
 import json
 from pathlib import Path
 
-from data_processers import ScrapedDataProcesser
-from db_connect import DatabaseController
+from beeromancy_back.data_processers import ScrapedDataProcesser
+from beeromancy_back.database import DatabaseController
 
 
 def process():

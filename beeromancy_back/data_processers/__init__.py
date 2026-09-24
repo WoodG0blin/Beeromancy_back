@@ -1,1 +1,0 @@
-from .data_processer import ScrapedDataProcesser as ScrapedDataProcesser

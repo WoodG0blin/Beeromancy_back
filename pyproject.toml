@@ -12,11 +12,19 @@ dependencies = []
 [project.scripts]
 beeromancy-back = "beeromancy_back:main"
 
+[tool.fastapi]
+entrypoint = "beeromancy_back.api.api:app"
+
 [build-system]
 requires = ["uv_build>=0.12.18,<0.13.0"]
 build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
+    "fastapi[standard]>=0.141.1",
+    "pandas>=3.0.6",
+    "rapidfuzz>=3.14.6",
     "ruff>=0.16.8",
+    "scrapy>=2.19.0",
+    "sqlalchemy>=2.0.54",
 ]

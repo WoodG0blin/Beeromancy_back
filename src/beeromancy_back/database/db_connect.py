@@ -1,8 +1,9 @@
-import db_schema as schema
 import pandas as pd
-from data_processers import PRODUCER_BASE_COUNTRIES
 from sqlalchemy import create_engine, select, update
 from sqlalchemy.orm import Session
+
+import beeromancy_back.database.db_schema as schema
+from beeromancy_back.data_processers import PRODUCER_BASE_COUNTRIES
 
 CHARACTERISTIC_CLASSES = {
     'malt': schema.Malt_Characteristics,
@@ -37,6 +38,17 @@ class DatabaseController:
         )
 
         return pd.read_sql_query(q, con = self.engine)
+
+    def get_ingredient_by_id(self, ingr_id: int):
+        return self.session.get(schema.Ingredient, ingr_id)
+
+    def get_ingredients_by_type(self, ingr_type: str):
+        q = (
+            select(schema.Ingredient)
+            .join(schema.IngrType)
+            .where(schema.IngrType.name == ingr_type)
+        )
+        return self.session.scalars(q).all()
 
     def try_prepare_for_loading(self, mapping: pd.DataFrame) -> bool:
         if mapping.empty:
