@@ -1,6 +1,6 @@
 import pandas as pd
 from sqlalchemy import create_engine, select, update
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 import beeromancy_back.database.db_schema as schema
 from beeromancy_back.data_processers import PRODUCER_BASE_COUNTRIES
@@ -40,15 +40,32 @@ class DatabaseController:
         return pd.read_sql_query(q, con = self.engine)
 
     def get_ingredient_by_id(self, ingr_id: int):
-        return self.session.get(schema.Ingredient, ingr_id)
+        return self.session.get(
+            schema.Ingredient,
+            ingr_id,
+            options=[
+                joinedload(schema.Ingredient.category),
+                joinedload(schema.Ingredient.producer),
+                joinedload(schema.Ingredient.country)
+            ]
+        )
 
     def get_ingredients_by_type(self, ingr_type: str):
         q = (
             select(schema.Ingredient)
             .join(schema.IngrType)
             .where(schema.IngrType.name == ingr_type)
+            .options(joinedload(schema.Ingredient.category),
+                     joinedload(schema.Ingredient.producer),
+                     joinedload(schema.Ingredient.country))
         )
         return self.session.scalars(q).all()
+
+    def get_user_by_username(self, username: str):
+        return self.session.scalars(
+            select(schema.User)
+            .where(schema.User.username == username)
+        ).first()
 
     def try_prepare_for_loading(self, mapping: pd.DataFrame) -> bool:
         if mapping.empty:

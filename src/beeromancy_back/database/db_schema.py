@@ -112,3 +112,13 @@ class IngredientMapping(Base):
     parser_name: Mapped[str] = mapped_column()
 
     master_ingredient: Mapped[Ingredient] = relationship(back_populates="parser_names")
+
+class User(Base):
+    __tablename__ = "dim_users"
+
+    user_id: Mapped[int] = mapped_column(primary_key=True)
+    public_id: Mapped[str] = mapped_column(unique=True, index=True)
+    username: Mapped[str]
+    email: Mapped[str]
+    hashed_password: Mapped[str]
+    disabled: Mapped[bool] = mapped_column(insert_default=False)
